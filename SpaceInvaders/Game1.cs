@@ -295,7 +295,7 @@ namespace SpaceInvaders
                         greenAlienRect[i] = temp;
                     }
                 }
-                 // ändra till yellow ship test
+                 // ändra till yellow ship
                 for (int i = 0; i < shipYellow_mannedRect.Count; i++)
                 {
                     Rectangle temp = shipYellow_mannedRect[i];
