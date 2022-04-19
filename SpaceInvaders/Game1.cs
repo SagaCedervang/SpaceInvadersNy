@@ -22,10 +22,18 @@ namespace SpaceInvaders
         Texture2D laserBild;
         List<Rectangle> laserRects = new List<Rectangle>();
 
+        Texture2D blueButtonBild;
+        Rectangle blueButtonRect = new Rectangle(350, 200, 190, 49);
+
         int updatesTillNyLaser = 60;
         int laserMovements = 5;
         int movingSpeed = 30;
+        int movingSpeedY = 30;
         int updatesTillAlienMovements = 60;
+        int scene = 0;
+
+        MouseState mouse = Mouse.GetState();
+        MouseState oldMouse = Mouse.GetState();
 
 
         KeyboardState tangentbord = Keyboard.GetState();
@@ -39,8 +47,8 @@ namespace SpaceInvaders
 
         protected override void Initialize()
         {
-            aliens();
 
+            aliens();
             base.Initialize();
         }
 
@@ -55,26 +63,82 @@ namespace SpaceInvaders
             shipYellow_mannedBild = Content.Load<Texture2D>("shipYellow_manned");
 
             laserBild = Content.Load<Texture2D>("laser");
-            
+
+            blueButtonBild = Content.Load<Texture2D>("blueButton");
         }
 
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+            /*
+            oldMouse = mouse;
+            mouse = Mouse.GetState();
+            
+            if (ButtonPressed() == true)
+            {
+                scene = 1;
+            }
 
+
+            switch (scene)
+            {
+                case 0:
+                    menue();
+                    break;
+
+                case 1:
+                    aliens();
+                    shipMovements();
+                    laserShooter();
+                    collision();
+                    alienMovements();
+                    break;
+            }
+            */
+
+            
             shipMovements();
             laserShooter();
             collision();
             alienMovements();
-
+            
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
+            /*
+            switch (scene)
+            {
+                case 0:
+                    drawFirstScene();
+                    break;
 
+                case 1:
+                    spriteBatch.Begin();
+                    spriteBatch.Draw(playerShipBild, playerShipRectangle, Color.White);
+
+                    foreach (Rectangle laserPosition in laserRects)
+                    {
+                        spriteBatch.Draw(laserBild, laserPosition, Color.White);
+                    }
+
+                    foreach (Rectangle yellowShip in shipYellow_mannedRect)
+                    {
+                        spriteBatch.Draw(shipYellow_mannedBild, yellowShip, Color.White);
+                    }
+
+                    foreach (Rectangle alien in greenAlienRect)
+                    {
+                        spriteBatch.Draw(greenAlienBild, alien, Color.White);
+                    }
+
+                    spriteBatch.End();
+                    break;
+            }
+            */
             spriteBatch.Begin();
             spriteBatch.Draw(playerShipBild, playerShipRectangle, Color.White);
 
@@ -94,7 +158,6 @@ namespace SpaceInvaders
             }
 
             spriteBatch.End();
-
             base.Draw(gameTime);
         }
 
@@ -149,7 +212,7 @@ namespace SpaceInvaders
 
         void aliens()
         {
-            for (int x = 0; x < 10; x++)
+            for (int x = 0; x < 8; x++)
             {
                 for (int y = 0; y < 2; y++)
                 {
@@ -157,7 +220,7 @@ namespace SpaceInvaders
                 }
             }
 
-            for (int x = 0; x < 10; x++)
+            for (int x = 0; x < 8; x++)
             {
                 for (int y = 0; y < 2; y++)
                 {
@@ -199,27 +262,6 @@ namespace SpaceInvaders
                     }
                 }
             }
-            /*
-            else
-            {
-                for (int i = 0; i < laserRects.Count; i++)
-                {
-                    Rectangle temp = laserRects[i];
-
-                    for (int j = 0; j < shipYellow_mannedRect.Count; j++)
-                    {
-                        Rectangle temp2 = shipYellow_mannedRect[j];
-
-                        if (temp.Intersects(temp2))
-                        {
-                            laserRects.Remove(temp);
-                            shipYellow_mannedRect.Remove(temp2);
-                        }
-                    }
-                }
-
-            }
-            */
 
             if (laserRects.Count <= greenAlienRect.Count)
             {
@@ -243,27 +285,7 @@ namespace SpaceInvaders
                     }
                 }
             }
-            /*
-            else
-            {
-                for (int i = 0; i < laserRects.Count; i++)
-                {
-                    Rectangle temp = laserRects[i];
 
-                    for (int j = 0; j < greenAlienRect.Count; j++)
-                    {
-                        Rectangle temp2 = greenAlienRect[j];
-
-                        if (temp.Intersects(temp2))
-                        {
-                            laserRects.Remove(temp);
-                            greenAlienRect.Remove(temp2);
-                        }
-                    }
-                }
-
-            }
-            */
         }
 
         void alienMovements()
@@ -295,45 +317,74 @@ namespace SpaceInvaders
                         greenAlienRect[i] = temp;
                     }
                 }
-                 // ändra till yellow ship
+
                 for (int i = 0; i < shipYellow_mannedRect.Count; i++)
                 {
                     Rectangle temp = shipYellow_mannedRect[i];
 
                     if (temp.Y < 420)
                     {
-
                         temp.Y += 5;
-                        greenAlienRect[i] = temp;
+                        shipYellow_mannedRect[i] = temp;
                     }
                 }
 
-
-                for (int i = 0; i < greenAlienRect.Count; i++)
+                for (int i = 0; i < shipYellow_mannedRect.Count; i++)
                 {
-                    Rectangle temp = greenAlienRect[i];
+                    Rectangle temp = shipYellow_mannedRect[i];
                     if (temp.X < 800 - temp.Width || temp.X > 0)
                     {
-                        temp.X += movingSpeed;
-                        greenAlienRect[i] = temp;
+                        temp.X += movingSpeedY;
+                        shipYellow_mannedRect[i] = temp;
                     }
                 }
-            
 
-                Rectangle first = greenAlienRect[0];
-                Rectangle last = greenAlienRect[greenAlienRect.Count - 1];
+                if (greenAlienRect.Count >= 1)
+                { 
+                    Rectangle first = greenAlienRect[0];
+                    Rectangle last = greenAlienRect[greenAlienRect.Count - 1];
 
-                if (first.X <= 0)
-                {
-                    movingSpeed *= -1;
+                    if (last.X >= 800 - last.Width || first.X <= 0)
+                    {
+                        movingSpeed *= -1;
+                    }
                 }
 
-                if (last.X >= 800 - last.Width)
+                if (shipYellow_mannedRect.Count >= 1)
                 {
-                    movingSpeed *= -1;
+                    Rectangle lastY = shipYellow_mannedRect[shipYellow_mannedRect.Count - 1];
+                    Rectangle firstY = shipYellow_mannedRect[0];
+
+                    if (lastY.X >= 800 - lastY.Width || firstY.X <= 0)
+                    {
+                        movingSpeedY *= -1;
+                    }
                 }
 
                 updatesTillAlienMovements = 60;
+            }
+
+            void drawFirstScene()
+            {
+                GraphicsDevice.Clear(Color.CornflowerBlue);
+
+                spriteBatch.Begin();
+                spriteBatch.Draw(blueButtonBild, blueButtonRect, Color.White);
+                spriteBatch.End();
+
+            }
+
+            bool ButtonPressed()
+            {
+                if (mouse.LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released)
+                {
+                    return true;
+                }
+
+                else
+                {
+                    return false;
+                }
             }
             
         }
