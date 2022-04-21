@@ -47,8 +47,9 @@ namespace SpaceInvaders
 
         protected override void Initialize()
         {
-
+           
             aliens();
+            
             base.Initialize();
         }
 
@@ -71,7 +72,7 @@ namespace SpaceInvaders
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            /*
+            
             oldMouse = mouse;
             mouse = Mouse.GetState();
             
@@ -80,65 +81,54 @@ namespace SpaceInvaders
                 scene = 1;
             }
 
+            if (lost() == true)
+            {
+                scene = 2;
+            }
 
             switch (scene)
             {
                 case 0:
-                    menue();
+                    
                     break;
 
                 case 1:
-                    aliens();
+                    
                     shipMovements();
                     laserShooter();
                     collision();
                     alienMovements();
+                    
+                    break;
+
+                case 2:
+                    drawGameOverScene;
                     break;
             }
-            */
+            
 
-            
-            shipMovements();
-            laserShooter();
-            collision();
-            alienMovements();
-            
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-            /*
+            
             switch (scene)
             {
                 case 0:
-                    drawFirstScene();
+                    DrawFirstScene();
                     break;
 
                 case 1:
-                    spriteBatch.Begin();
-                    spriteBatch.Draw(playerShipBild, playerShipRectangle, Color.White);
-
-                    foreach (Rectangle laserPosition in laserRects)
-                    {
-                        spriteBatch.Draw(laserBild, laserPosition, Color.White);
-                    }
-
-                    foreach (Rectangle yellowShip in shipYellow_mannedRect)
-                    {
-                        spriteBatch.Draw(shipYellow_mannedBild, yellowShip, Color.White);
-                    }
-
-                    foreach (Rectangle alien in greenAlienRect)
-                    {
-                        spriteBatch.Draw(greenAlienBild, alien, Color.White);
-                    }
-
-                    spriteBatch.End();
+                    DrawGame();
                     break;
             }
-            */
+            base.Draw(gameTime);
+        }
+
+        void DrawGame()
+        {
             spriteBatch.Begin();
             spriteBatch.Draw(playerShipBild, playerShipRectangle, Color.White);
 
@@ -157,8 +147,23 @@ namespace SpaceInvaders
                 spriteBatch.Draw(greenAlienBild, alien, Color.White);
             }
 
+            spriteBatch.Draw(playerShipBild, playerShipRectangle, Color.White);
+
+            foreach (Rectangle laserPosition in laserRects)
+            {
+                spriteBatch.Draw(laserBild, laserPosition, Color.White);
+            }
+
+            foreach (Rectangle yellowShip in shipYellow_mannedRect)
+            {
+                spriteBatch.Draw(shipYellow_mannedBild, yellowShip, Color.White);
+            }
+
+            foreach (Rectangle alien in greenAlienRect)
+            {
+                spriteBatch.Draw(greenAlienBild, alien, Color.White);
+            }
             spriteBatch.End();
-            base.Draw(gameTime);
         }
 
         void shipMovements()
@@ -212,22 +217,17 @@ namespace SpaceInvaders
 
         void aliens()
         {
-            for (int x = 0; x < 8; x++)
+            for (int i = 0; i < 2; i++)
             {
-                for (int y = 0; y < 2; y++)
+                for (int x = 0; x < 8; x++)
                 {
-                    shipYellow_mannedRect.Add(new Rectangle(20 + 80 * x, 20 + 60 * y, 50, 50));
+                    for (int y = 0; y < 2; y++)
+                    {
+                        shipYellow_mannedRect.Add(new Rectangle(20 + 80 * x, 20 + 60 * y, 50, 50));
+                    }
                 }
             }
-
-            for (int x = 0; x < 8; x++)
-            {
-                for (int y = 0; y < 2; y++)
-                {
-                    shipYellow_mannedRect.Add(new Rectangle(20 + 80 * x, 20 + 60 * y, 50, 50));
-                }
-            }
-
+            
             for (int x = 0; x < 8; x++)
             {
                 for (int y = 0; y < 1; y++)
@@ -363,30 +363,48 @@ namespace SpaceInvaders
 
                 updatesTillAlienMovements = 60;
             }
+        }
+        void DrawFirstScene()
+        {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            void drawFirstScene()
+            spriteBatch.Begin();
+            spriteBatch.Draw(blueButtonBild, blueButtonRect, Color.White);
+            spriteBatch.End();
+
+        }
+
+        bool ButtonPressed()
+        {
+            if (mouse.LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released)
             {
-                GraphicsDevice.Clear(Color.CornflowerBlue);
-
-                spriteBatch.Begin();
-                spriteBatch.Draw(blueButtonBild, blueButtonRect, Color.White);
-                spriteBatch.End();
-
+                return true;
             }
 
-            bool ButtonPressed()
+            else
             {
-                if (mouse.LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released)
-                {
-                    return true;
-                }
-
-                else
-                {
-                    return false;
-                }
+                return false;
             }
-            
+        }
+
+        bool lost()
+        {
+            Rectangle alien1 = greenAlienRect[0];
+            Rectangle alien2 = shipYellow_mannedRect[0];
+            if (alien1.Y <= 420 || alien2.Y <= 420)
+            {
+                return true;
+            }
+
+            else
+            {
+                return false;
+            }
+        }
+
+        void drawGameOverScene()
+        {
+
         }
     }
 }
