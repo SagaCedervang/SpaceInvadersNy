@@ -23,7 +23,15 @@ namespace SpaceInvaders
         List<Rectangle> laserRects = new List<Rectangle>();
 
         Texture2D blueButtonBild;
-        Rectangle blueButtonRect = new Rectangle(350, 200, 190, 49);
+        Rectangle blueButtonRect = new Rectangle(300, 200, 190, 49);
+
+        SpriteFont arialFont;
+
+        string start = "Press the button to play";
+        Vector2 startPosition = new Vector2(315, 215);
+
+        string lostText = "You lost :(";
+        Vector2 lostTextPosition = new Vector2(315, 215);
 
         int updatesTillNyLaser = 60;
         int laserMovements = 5;
@@ -34,7 +42,6 @@ namespace SpaceInvaders
 
         MouseState mouse = Mouse.GetState();
         MouseState oldMouse = Mouse.GetState();
-
 
         KeyboardState tangentbord = Keyboard.GetState();
 
@@ -66,6 +73,8 @@ namespace SpaceInvaders
             laserBild = Content.Load<Texture2D>("laser");
 
             blueButtonBild = Content.Load<Texture2D>("blueButton");
+
+            arialFont = Content.Load<SpriteFont>("arial");
         }
 
         protected override void Update(GameTime gameTime)
@@ -102,8 +111,8 @@ namespace SpaceInvaders
                     break;
 
                 case 2:
-                    drawGameOverScene;
                     break;
+
             }
             
 
@@ -122,6 +131,10 @@ namespace SpaceInvaders
 
                 case 1:
                     DrawGame();
+                    break;
+
+                case 2:
+                    drawGameOverScene();
                     break;
             }
             base.Draw(gameTime);
@@ -370,6 +383,7 @@ namespace SpaceInvaders
 
             spriteBatch.Begin();
             spriteBatch.Draw(blueButtonBild, blueButtonRect, Color.White);
+            spriteBatch.DrawString(arialFont, start, startPosition, Color.Black);
             spriteBatch.End();
 
         }
@@ -391,7 +405,7 @@ namespace SpaceInvaders
         {
             Rectangle alien1 = greenAlienRect[0];
             Rectangle alien2 = shipYellow_mannedRect[0];
-            if (alien1.Y <= 420 || alien2.Y <= 420)
+            if (alien1.Y >= 420 || alien2.Y >= 420)
             {
                 return true;
             }
@@ -404,7 +418,11 @@ namespace SpaceInvaders
 
         void drawGameOverScene()
         {
+            GraphicsDevice.Clear(Color.PaleVioletRed);
 
+            spriteBatch.Begin();
+            spriteBatch.DrawString(arialFont, lostText, lostTextPosition, Color.Black);
+            spriteBatch.End();
         }
     }
 }
