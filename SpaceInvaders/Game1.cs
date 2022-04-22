@@ -34,13 +34,10 @@ namespace SpaceInvaders
         Vector2 lostTextPosition = new Vector2(315, 215);
 
         string winText = "You won! :)";
-        Vector2 winTextPosition = new Vector2(315, 215);
+        Vector2 winTextPosition = new Vector2(300, 200);
 
-        int updatesTillNyLaser = 60;
-        int laserMovements = 5;
-        int movingSpeed = 30;
-        int movingSpeedY = 30;
-        int updatesTillAlienMovements = 60;
+        public Dictionary<string, int> settingsDict = new Dictionary<string, int>();
+
         int scene = 0;
 
         MouseState mouse = Mouse.GetState();
@@ -53,6 +50,13 @@ namespace SpaceInvaders
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            //variables in dictionary
+            settingsDict["movingSpeed"] = 30;
+            settingsDict["updatesToNewLaser"] = 60;
+            settingsDict["laserMovements"] = 5;
+            settingsDict["movingSpeedY"] = 30;
+            settingsDict["updatesToAlienMovements"] = 60;
         }
 
         protected override void Initialize()
@@ -120,10 +124,7 @@ namespace SpaceInvaders
 
                 case 3:
                     break;
-
             }
-            
-
             base.Update(gameTime);
         }
 
@@ -191,6 +192,12 @@ namespace SpaceInvaders
             spriteBatch.End();
         }
 
+        void settings()
+        {
+            Dictionary<string, int> settingsDict = new Dictionary<string, int>();
+            settingsDict["movingSpeed"] = 30;
+        }
+
         void shipMovements()
         {
             tangentbord = Keyboard.GetState();
@@ -210,10 +217,10 @@ namespace SpaceInvaders
         {
             tangentbord = Keyboard.GetState();
 
-            updatesTillNyLaser--;
-            if (tangentbord.IsKeyDown(Keys.Space) && updatesTillNyLaser <= 0)
+            settingsDict["updatesToNewLaser"]--;
+            if (tangentbord.IsKeyDown(Keys.Space) && settingsDict["updatesToNewLaser"] <= 0)
             {
-                updatesTillNyLaser = 60;
+                settingsDict["updatesToNewLaser"] = 60;
                 for (int x = 0; x < 1; x++)
                 {
                     laserRects.Add(new Rectangle(playerShipRectangle.X + 23, 390, 9, 20));
@@ -228,7 +235,7 @@ namespace SpaceInvaders
 
                 if (temp.Y > 0)
                 {
-                    temp.Y -= laserMovements;
+                    temp.Y -= settingsDict["laserMovements"];
                     laserRects[i] = temp;
                 }
 
@@ -315,10 +322,11 @@ namespace SpaceInvaders
 
         void alienMovements()
         {
-            updatesTillAlienMovements--;
+            settingsDict["updatesToAlienMovements"]--;
 
-            if (updatesTillAlienMovements <= 0)
+            if (settingsDict["updatesToAlienMovements"] <= 0)
             {
+               
                 
                 for (int i = 0; i < greenAlienRect.Count; i++)
                 {
@@ -338,7 +346,7 @@ namespace SpaceInvaders
                     Rectangle temp = greenAlienRect[i];
                     if (temp.X < 800 - temp.Width || temp.X > 0)
                     {
-                        temp.X += movingSpeed;
+                        temp.X += settingsDict["movingSpeed"];
                         greenAlienRect[i] = temp;
                     }
                 }
@@ -359,7 +367,7 @@ namespace SpaceInvaders
                     Rectangle temp = shipYellow_mannedRect[i];
                     if (temp.X < 800 - temp.Width || temp.X > 0)
                     {
-                        temp.X += movingSpeedY;
+                        temp.X += settingsDict["movingSpeedY"];
                         shipYellow_mannedRect[i] = temp;
                     }
                 }
@@ -371,7 +379,7 @@ namespace SpaceInvaders
 
                     if (last.X >= 800 - last.Width || first.X <= 0)
                     {
-                        movingSpeed *= -1;
+                        settingsDict["movingSpeed"] *= -1;
                     }
                 }
 
@@ -382,11 +390,11 @@ namespace SpaceInvaders
 
                     if (lastY.X >= 800 - lastY.Width || firstY.X <= 0)
                     {
-                        movingSpeedY *= -1;
+                        settingsDict["movingSpeedY"] *= -1;
                     }
                 }
 
-                updatesTillAlienMovements = 60;
+                settingsDict["updatesToAlienMovements"] = 60;
             }
         }
         void DrawFirstScene()
@@ -416,7 +424,7 @@ namespace SpaceInvaders
         void lost()
         {
 
-            if (shipYellow_mannedRect.Count >= 0)
+            if (shipYellow_mannedRect.Count >= 1)
             {
                 if (shipYellow_mannedRect[0].Y >= 400)
                 {
@@ -424,7 +432,7 @@ namespace SpaceInvaders
                 }
             }
 
-            if (greenAlienRect.Count >= 0)
+            if (greenAlienRect.Count >= 1)
             {
                 if (greenAlienRect[0].Y >= 400)
                 {
