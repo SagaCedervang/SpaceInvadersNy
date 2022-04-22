@@ -31,7 +31,7 @@ namespace SpaceInvaders
         Vector2 startPosition = new Vector2(150, 100);
 
         string lostText = "You lost :(";
-        Vector2 lostTextPosition = new Vector2(315, 215);
+        Vector2 lostTextPosition = new Vector2(300, 200);
 
         string winText = "You won! :)";
         Vector2 winTextPosition = new Vector2(300, 200);
@@ -190,12 +190,6 @@ namespace SpaceInvaders
                 spriteBatch.Draw(greenAlienBild, alien, Color.White);
             }
             spriteBatch.End();
-        }
-
-        void settings()
-        {
-            Dictionary<string, int> settingsDict = new Dictionary<string, int>();
-            settingsDict["movingSpeed"] = 30;
         }
 
         void shipMovements()
@@ -426,7 +420,8 @@ namespace SpaceInvaders
 
             if (shipYellow_mannedRect.Count >= 1)
             {
-                if (shipYellow_mannedRect[0].Y >= 400)
+                Rectangle last = shipYellow_mannedRect[shipYellow_mannedRect.Count - 1];
+                if (last.Y >= 400)
                 {
                     scene = 2;
                 }
