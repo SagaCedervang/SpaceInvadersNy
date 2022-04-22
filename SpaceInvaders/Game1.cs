@@ -28,10 +28,13 @@ namespace SpaceInvaders
         SpriteFont arialFont;
 
         string start = "Press the button to play";
-        Vector2 startPosition = new Vector2(315, 215);
+        Vector2 startPosition = new Vector2(150, 100);
 
         string lostText = "You lost :(";
         Vector2 lostTextPosition = new Vector2(315, 215);
+
+        string winText = "You won! :)";
+        Vector2 winTextPosition = new Vector2(315, 215);
 
         int updatesTillNyLaser = 60;
         int laserMovements = 5;
@@ -90,10 +93,12 @@ namespace SpaceInvaders
                 scene = 1;
             }
 
-            if (lost() == true)
+            if (win() == true)
             {
-                scene = 2;
+                scene = 3;
             }
+
+            lost();
 
             switch (scene)
             {
@@ -111,6 +116,9 @@ namespace SpaceInvaders
                     break;
 
                 case 2:
+                    break;
+
+                case 3:
                     break;
 
             }
@@ -135,6 +143,10 @@ namespace SpaceInvaders
 
                 case 2:
                     drawGameOverScene();
+                    break;
+
+                case 3:
+                    drawWinningScene();
                     break;
             }
             base.Draw(gameTime);
@@ -401,11 +413,38 @@ namespace SpaceInvaders
             }
         }
 
-        bool lost()
+        void lost()
         {
-            Rectangle alien1 = greenAlienRect[0];
-            Rectangle alien2 = shipYellow_mannedRect[0];
-            if (alien1.Y >= 420 || alien2.Y >= 420)
+
+            if (shipYellow_mannedRect.Count >= 0)
+            {
+                if (shipYellow_mannedRect[0].Y >= 400)
+                {
+                    scene = 2;
+                }
+            }
+
+            if (greenAlienRect.Count >= 0)
+            {
+                if (greenAlienRect[0].Y >= 400)
+                {
+                    scene = 2;
+                }
+            }
+        }
+
+        void drawGameOverScene()
+        {
+            GraphicsDevice.Clear(Color.PaleVioletRed);
+
+            spriteBatch.Begin();
+            spriteBatch.DrawString(arialFont, lostText, lostTextPosition, Color.Black);
+            spriteBatch.End();
+        }
+
+        bool win()
+        {
+            if(greenAlienRect.Count == 0 && shipYellow_mannedRect.Count == 0)
             {
                 return true;
             }
@@ -416,12 +455,12 @@ namespace SpaceInvaders
             }
         }
 
-        void drawGameOverScene()
+        void drawWinningScene()
         {
-            GraphicsDevice.Clear(Color.PaleVioletRed);
+            GraphicsDevice.Clear(Color.LightSeaGreen);
 
             spriteBatch.Begin();
-            spriteBatch.DrawString(arialFont, lostText, lostTextPosition, Color.Black);
+            spriteBatch.DrawString(arialFont, winText, winTextPosition, Color.Black);
             spriteBatch.End();
         }
     }
